@@ -1,0 +1,13 @@
+{
+  "name": "steamed-hams-backend",
+  "version": "1.0.0",
+  "description": "Backend API for STEAMED HAMS: THE WORST ENGINEER - Royal Engineering Records Office",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": ["steampunk", "game-jam", "game-vita-5.0"],
+  "author": "The Royal Engineering Board",
+  "license": "MIT"
+}

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STEAMED HAMS: THE WORST ENGINEER | Steampunk Game Jam</title>
+  <meta name="description" content="A revolutionary steam-powered walking contraption designed by someone who has never operated a machine. Deliver one tiny brass gear to the Royal Engineering Office!">
+  
+  <!-- Google Fonts: Victorian & Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="gameContainer">
+    <!-- Main Gameplay Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- TOP AUDIO TOGGLE -->
+    <div id="topAudioBar">
+      <span id="backendStatusIndicator">⚙ Ministry Archives: CONNECTING...</span>
+      <button id="muteBtn" class="steampunk-small-btn" onclick="toggleMuteSound()">
+        🔊 AUDIO: ON
+      </button>
+    </div>
+
+    <!-- IN-GAME HUD -->
+    <div id="hud" class="hidden">
+      <!-- Pressure Gauge & Boiler Meters -->
+      <div class="hud-panel brass-box">
+        <div class="gauge-wrapper">
+          <div class="analog-dial">
+            <div class="dial-face">
+              <div class="dial-arc red-zone"></div>
+              <div id="pressureNeedle" class="dial-needle"></div>
+              <div class="dial-cap"></div>
+            </div>
+            <div class="gauge-label">
+              <span class="gauge-title">STEAM PRESSURE</span>
+              <span id="pressureValue" class="gauge-reading">35%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="gearbox-indicator">
+          <div class="indicator-title">TRANSMISSION:</div>
+          <div id="gearboxStatus" class="indicator-status">⚙ STANDARD FORWARD</div>
+        </div>
+
+        <div class="stats-counter">
+          <div>SHIFT TIME: <span id="hudTimer">0s</span></div>
+          <div>CATASTROPHES: <span id="hudDeaths">0</span></div>
+        </div>
+      </div>
+
+      <!-- Critical Overheat Alert Banner -->
+      <div id="overheatAlert" class="overheat-banner hidden">
+        CRITICAL OVERHEAT: DETONATION IN 5.0s! VENT WITH [W]!
+      </div>
+
+      <!-- Bottom Quick Controls Hint -->
+      <div class="controls-hint brass-strip">
+        <span>[A/D] Shuffle</span>
+        <span>[SPACE] Jump (Need 20% Steam)</span>
+        <span>[W] Vent Steam</span>
+        <span>[E] Operate / Stamp</span>
+        <span>[R] Rebuild</span>
+        <span>[ESC] Pause</span>
+      </div>
+    </div>
+
+    <!-- MAIN MENU OVERLAY -->
+    <div id="mainMenu" class="overlay-screen">
+      <div class="menu-parchment brass-frame">
+        <div class="gears-decor top-left"></div>
+        <div class="gears-decor top-right"></div>
+        
+        <h1 class="game-title">STEAMED HAMS</h1>
+        <h2 class="game-subtitle">THE WORST ENGINEER</h2>
+        <p class="game-tagline">“A revolutionary machine designed by someone who has never operated a machine.”</p>
+        
+        <div class="mission-briefing">
+          <strong>ROYAL CONTRACT #1889-B:</strong> Deliver one (1) single brass gear to the Royal Engineering Office. Every lever is catastrophically inconvenient.
+        </div>
+
+        <div class="menu-actions">
+          <button id="startBtn" class="steampunk-btn primary" onclick="window.game.start()">
+            ⚙ COMMENCE OPERATION
+          </button>
+          <button class="steampunk-btn" onclick="openModal('howToPlayModal')">
+            📜 HOW NOT TO EXPLODE
+          </button>
+          <button class="steampunk-btn" onclick="openLeaderboard()">
+            🏛 MINISTRY RECORDS
+          </button>
+          <button class="steampunk-btn" onclick="openModal('settingsModal')">
+            🔧 QUESTIONABLE SETTINGS
+          </button>
+        </div>
+
+        <div class="menu-footer">
+          <span>Game Vita 5.0 Submission | Theme: Steampunk | “The Worst Game Wins”</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE MENU -->
+    <div id="pauseMenu" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame small-frame">
+        <h2 class="section-title">ENGINE HALTED</h2>
+        <p>The boiler rests in a state of suspended combustion.</p>
+        <div class="menu-actions">
+          <button class="steampunk-btn primary" onclick="window.game.togglePause()">
+            ⚙ RESUME SHIFT
+          </button>
+          <button class="steampunk-btn" onclick="window.game.restart()">
+            🔄 RESTART LEVEL [R]
+          </button>
+          <button class="steampunk-btn" onclick="window.game.showMenu()">
+            🏠 MAIN MENU
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="howToPlayModal" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame modal-frame">
+        <h2 class="section-title">THE ROYAL OPERATOR'S MANUAL</h2>
+        <div class="manual-content">
+          <div class="manual-rule">
+            <strong>1. LOCOMOTION [A / D]:</strong> The bipedal machine accelerates with heavy steam momentum. Walking builds boiler pressure.
+          </div>
+          <div class="manual-rule">
+            <strong>2. THE BUREAUCRATIC JUMP [SPACE]:</strong> Jumping requires at least 20% steam pressure. If pressed on empty, the machine emits a tragic wheeze!
+          </div>
+          <div class="manual-rule">
+            <strong>3. PRESSURE SAFETY VALVE [W]:</strong> If pressure hits 100%, you have 5 seconds before a boiler rupture. Hold [W] to vent excess steam!
+          </div>
+          <div class="manual-rule">
+            <strong>4. EMOTIONAL GEARBOX:</strong> Passing through experimental magnetic fields reverses your left and right controls. Adapt with composure.
+          </div>
+          <div class="manual-rule">
+            <strong>5. MINISTERIAL TRIPLICATE DOOR [E]:</strong> You must press [E] three times to stamp all compliance forms before the blast door unlocks.
+          </div>
+        </div>
+        <button class="steampunk-btn primary" onclick="closeModal('howToPlayModal')">
+          UNDERSTOOD, CARRY ON
+        </button>
+      </div>
+    </div>
+
+    <!-- QUESTIONABLE SETTINGS MODAL -->
+    <div id="settingsModal" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame modal-frame">
+        <h2 class="section-title">QUESTIONABLE SETTINGS</h2>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label>Master Steam Decibels:</label>
+            <input type="range" min="0" max="100" value="70" oninput="updateMasterVol(this.value)">
+          </div>
+          <div class="setting-item">
+            <label>Piston Clank Severity:</label>
+            <input type="range" min="0" max="100" value="80" oninput="updateSfxVol(this.value)">
+          </div>
+          <div class="setting-item">
+            <label>Victorian Verbosity:</label>
+            <select id="verbositySelect">
+              <option value="normal">Proper & Pompous</option>
+              <option value="absurd" selected>Alarmingly Cynical</option>
+              <option value="unbearable">Posthumous Bureaucracy</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label>Gauge Polishing Friction:</label>
+            <input type="range" min="0" max="100" value="50" oninput="showFrictionGleam()">
+            <span id="gleamNotice" style="font-size: 10px; color: #b8860b;">Current friction: 100% brass luster</span>
+          </div>
+        </div>
+        <button class="steampunk-btn primary" onclick="closeModal('settingsModal')">
+          SAVE ADJUSTMENTS
+        </button>
+      </div>
+    </div>
+
+    <!-- UPGRADE TERMINAL MODAL -->
+    <div id="upgradeModal" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame modal-frame">
+        <h2 class="section-title">PATENT UPGRADE TERMINAL</h2>
+        <p class="upgrade-subtitle">Choose one totally useless innovation to bolt onto your machine:</p>
+        
+        <div class="upgrades-list">
+          <div class="upgrade-card" onclick="window.game.chooseUpgrade('knees')">
+            <div class="upg-icon">🦵</div>
+            <div class="upg-info">
+              <h3>Gold-Plated Knees</h3>
+              <p>Increases machine mass by 300%. Makes footsteps thunderous and screen shake catastrophic.</p>
+            </div>
+            <button class="steampunk-small-btn">INSTALL</button>
+          </div>
+
+          <div class="upgrade-card" onclick="window.game.chooseUpgrade('premium_steam')">
+            <div class="upg-icon">💨</div>
+            <div class="upg-info">
+              <h3>Artisanal Steam Extract</h3>
+              <p>Infuses chimney exhaust with regal golden sparkle and unnecessarily dramatic royal trumpets.</p>
+            </div>
+            <button class="steampunk-small-btn">INSTALL</button>
+          </div>
+
+          <div class="upgrade-card" onclick="window.game.chooseUpgrade('quantum_gear')">
+            <div class="upg-icon">⚙</div>
+            <div class="upg-info">
+              <h3>Quantum Gear of Apathy</h3>
+              <p>Spins an auxiliary brass cog at 12,000 RPM. Connected to absolutely nothing useful.</p>
+            </div>
+            <button class="steampunk-small-btn">INSTALL</button>
+          </div>
+
+          <div class="upgrade-card" onclick="window.game.chooseUpgrade('cup_holder')">
+            <div class="upg-icon">☕</div>
+            <div class="upg-info">
+              <h3>Inverted Cup Holder</h3>
+              <p>A gimballed porcelain saucer welded upside down. Spills virtual Earl Grey tea continuously.</p>
+            </div>
+            <button class="steampunk-small-btn">INSTALL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIN SCREEN OVERLAY -->
+    <div id="winScreen" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame victory-frame">
+        <h1 class="victory-title">CERTIFICATE OF COMPLETION</h1>
+        <h3 class="victory-subtitle">Issued by the Royal Department of Questionable Engineering</h3>
+
+        <div class="victory-seal">ROYAL APPROVAL</div>
+
+        <p class="victory-quote">
+          “SUCCESS! You delivered precisely one (1) brass gear. The national railway network has completely collapsed, but your contract is legally fulfilled.”
+        </p>
+
+        <div class="stats-summary-box">
+          <div class="stat-row">
+            <span>Time Expended:</span>
+            <strong id="winTime">0s</strong>
+          </div>
+          <div class="stat-row">
+            <span>Machine Catastrophes:</span>
+            <strong id="winDeaths">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Atmospheric Steam Vented:</span>
+            <strong id="winSteam">0 Liters</strong>
+          </div>
+          <div class="stat-row">
+            <span>Official Engineer Rank:</span>
+            <strong style="color: #ffd700;">Grand High Disaster Architect</strong>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button class="steampunk-btn primary" onclick="window.game.restart()">
+            ⚙ DELIVER ANOTHER GEAR
+          </button>
+          <button class="steampunk-btn" onclick="openLeaderboard()">
+            🏛 VIEW ROYAL ARCHIVES
+          </button>
+          <button class="steampunk-btn" onclick="window.game.showMenu()">
+            🏠 MAIN MENU
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOSE SCREEN OVERLAY -->
+    <div id="loseScreen" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame failure-frame">
+        <h1 class="failure-title">DISASTER OCCURRED</h1>
+        <h3 class="failure-subtitle">Incident Registered in the Ministry of Misfortune</h3>
+
+        <div class="failure-reason-box">
+          <span class="reason-label">OFFICIAL CAUSE OF DETONATION:</span>
+          <p id="loseReason">Boiler rupture due to thermal stubbornness.</p>
+        </div>
+
+        <p class="clanksworth-quote">
+          “Sir Clanksworth notes: The machine has been reduced to high-velocity brass shrapnel. Press [R] to reconstruct.”
+        </p>
+
+        <div class="menu-actions">
+          <button class="steampunk-btn primary" onclick="window.game.restart()">
+            🔄 RECONSTRUCT MACHINE [R]
+          </button>
+          <button class="steampunk-btn" onclick="window.game.showMenu()">
+            🏠 MAIN MENU
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINISTRY LEADERBOARD / RECORDS MODAL -->
+    <div id="leaderboardModal" class="overlay-screen hidden">
+      <div class="menu-parchment brass-frame modal-frame">
+        <h2 class="section-title">ROYAL ENGINEERING ARCHIVES</h2>
+        <p>Official records of surviving engineers and certified disasters:</p>
+
+        <div class="leaderboard-table-container">
+          <table id="leaderboardTable" class="steampunk-table">
+            <thead>
+              <tr>
+                <th>ENGINEER</th>
+                <th>TIME</th>
+                <th>DEATHS</th>
+                <th>STEAM</th>
+                <th>AWARDED RANK</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              <!-- Dynamically populated from Backend API -->
+            </tbody>
+          </table>
+        </div>
+
+        <button class="steampunk-btn primary" onclick="closeModal('leaderboardModal')">
+          CLOSE ARCHIVES
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="audio.js"></script>
+  <script src="robot.js"></script>
+  <script src="player.js"></script>
+  <script src="level.js"></script>
+  <script src="game.js"></script>
+
+  <!-- UI Event Handlers -->
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      if (window.soundEngine) window.soundEngine.playButtonClick();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+      if (window.soundEngine) window.soundEngine.playButtonClick();
+    }
+
+    function toggleMuteSound() {
+      if (window.soundEngine) {
+        const isMuted = window.soundEngine.toggleMute();
+        document.getElementById('muteBtn').innerText = isMuted ? '🔇 AUDIO: MUTED' : '🔊 AUDIO: ON';
+      }
+    }
+
+    function updateMasterVol(val) {
+      if (window.soundEngine) window.soundEngine.setMasterVolume(val / 100);
+    }
+
+    function updateSfxVol(val) {
+      if (window.soundEngine) window.soundEngine.setSfxVolume(val / 100);
+    }
+
+    function showFrictionGleam() {
+      const el = document.getElementById('gleamNotice');
+      if (el) {
+        el.innerText = `Luster amplified! Glare increased by ${(Math.random() * 50 + 50).toFixed(0)}%!`;
+      }
+    }
+
+    async function openLeaderboard() {
+      openModal('leaderboardModal');
+      const tbody = document.getElementById('leaderboardBody');
+      tbody.innerHTML = '<tr><td colspan="5">Consulting the Ministry Archives...</td></tr>';
+
+      try {
+        const res = await fetch('http://localhost:3001/api/leaderboard', { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const data = await res.json();
+          renderLeaderboard(data.records || []);
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend offline, using local store');
+      }
+
+      // Fallback local records
+      const local = JSON.parse(localStorage.getItem('steamed_records') || '[]');
+      const defaultRecords = [
+        { name: "Lord Bartholomew Piston-Twist", time: 142, deaths: 8, steamVented: 1420, rank: "Grand High Disaster Architect" },
+        { name: "Lady Clementine Gear-Snapper", time: 165, deaths: 14, steamVented: 2890, rank: "Honorary Boiler Detonator" },
+        { name: "Archibald Steam-Blower Esq.", time: 198, deaths: 21, steamVented: 4100, rank: "Senior Incompetence Inspector" }
+      ];
+      renderLeaderboard([...local, ...defaultRecords]);
+    }
+
+    function renderLeaderboard(records) {
+      const tbody = document.getElementById('leaderboardBody');
+      tbody.innerHTML = '';
+      records.sort((a, b) => a.time - b.time).slice(0, 8).forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${r.name || 'Anonymous Engineer'}</strong></td>
+          <td>${r.time}s</td>
+          <td>${r.deaths}</td>
+          <td>${r.steamVented || 0}L</td>
+          <td style="color:#d4af37;">${r.rank || 'Certified Hazard'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>

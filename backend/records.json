@@ -1,0 +1,56 @@
+{
+  "leaderboard": [
+    {
+      "name": "Lord Bartholomew Piston-Twist",
+      "time": 142.5,
+      "deaths": 8,
+      "steamVented": 1420,
+      "upgrades": [
+        "Gold-Plated Knees"
+      ],
+      "rank": "Grand High Disaster Architect",
+      "date": "1889-04-12"
+    },
+    {
+      "name": "Lady Clementine Gear-Snapper",
+      "time": 165.2,
+      "deaths": 14,
+      "steamVented": 2890,
+      "upgrades": [
+        "Premium Steam",
+        "Quantum Gear"
+      ],
+      "rank": "Honorary Boiler Detonator",
+      "date": "1891-11-03"
+    },
+    {
+      "name": "Archibald Steam-Blower Esq.",
+      "time": 198.8,
+      "deaths": 21,
+      "steamVented": 4100,
+      "upgrades": [
+        "Inverted Cup Holder"
+      ],
+      "rank": "Senior Incompetence Inspector",
+      "date": "1894-02-28"
+    }
+  ],
+  "incidents": [
+    {
+      "reason": "Mangled by Unregulated High-Torque Hazard Cog",
+      "steamVented": 0,
+      "timestamp": "2026-10-10T09:49:18.419Z"
+    },
+    {
+      "reason": "Mangled by Unregulated High-Torque Hazard Cog",
+      "steamVented": 0,
+      "timestamp": "2026-10-10T09:50:32.025Z"
+    },
+    {
+      "reason": "Mangled by Unregulated High-Torque Hazard Cog",
+      "steamVented": 0,
+      "timestamp": "2026-10-10T10:21:48.917Z"
+    }
+  ],
+  "boilerTemperature": 98.4
+}

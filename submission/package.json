@@ -1,0 +1,13 @@
+{
+  "name": "steamed-hams-frontend",
+  "version": "1.0.0",
+  "description": "Frontend UI & Canvas Game for STEAMED HAMS: THE WORST ENGINEER",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "start": "node dev-server.js"
+  },
+  "keywords": ["steampunk", "game-jam", "canvas", "game-vita-5.0"],
+  "author": "The Royal Engineering Board",
+  "license": "MIT"
+}

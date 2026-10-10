@@ -1,0 +1,15 @@
+{
+  "name": "steamed-hams-the-worst-engineer",
+  "version": "1.0.0",
+  "description": "STEAMED HAMS: THE WORST ENGINEER - Game Vita 5.0 Steampunk Game Jam Entry",
+  "main": "dev.js",
+  "scripts": {
+    "dev": "node dev.js",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "start": "node dev.js"
+  },
+  "keywords": ["steampunk", "game-jam", "the-worst-game-wins", "game-vita-5.0"],
+  "author": "The Royal Engineering Board",
+  "license": "MIT"
+}
